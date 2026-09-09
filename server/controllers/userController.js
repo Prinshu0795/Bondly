@@ -7,7 +7,11 @@ const path = require('path');
 exports.getUserProfile = async (req, res) => {
   try {
     const { username } = req.params;
-    const user = await User.findOne({ username }).select('-password');
+    const user = await User.findOne({ username })
+      .select('-password')
+      .populate('followers', 'username profilePicture badges')
+      .populate('following', 'username profilePicture badges');
+      
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -16,8 +20,16 @@ exports.getUserProfile = async (req, res) => {
     const posts = await Post.find({ 'author.userId': user._id })
       .sort({ createdAt: -1 })
       .populate('author.userId', 'profilePicture badges');
+      
+    const likedPosts = await Post.find({ 'likes.userId': user._id })
+      .sort({ createdAt: -1 })
+      .populate('author.userId', 'profilePicture badges');
+      
+    const commentedPosts = await Post.find({ 'comments.userId': user._id })
+      .sort({ createdAt: -1 })
+      .populate('author.userId', 'profilePicture badges');
     
-    res.json({ success: true, user, posts });
+    res.json({ success: true, user, posts, likedPosts, commentedPosts });
   } catch (error) {
     console.error('Error fetching profile:', error);
     res.status(500).json({ success: false, message: 'Server error' });
