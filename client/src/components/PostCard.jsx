@@ -186,56 +186,23 @@ export default function PostCard({ post, onPostUpdated, onPostDeleted }) {
 
           {isAuthenticated && (
             <div style={{ marginTop: '1rem' }}>
-              <div className="comment-points-banner">
-                <div className="banner-content">
-                  <div className="title">💬 Start a conversation ✨</div>
-                  <div className="subtitle">Tap any suggestion to use it</div>
-                </div>
-                <div className="badge" style={{ background: 'rgba(168, 85, 247, 0.2)', color: '#d8b4fe', border: 'none', padding: '0.4rem 0.6rem', fontSize: '0.8rem' }}>
-                  ★ +5 Points
-                </div>
-              </div>
-
-              <div className="comment-suggestions">
-                <div className="suggestion-card" onClick={() => setCommentText("What's your favorite...")}>
-                  <span className="suggestion-icon">🎉</span>
-                  <span className="suggestion-text">What's your fa...</span>
-                  <span style={{ marginLeft: 'auto', color: 'var(--color-text-secondary)' }}>›</span>
-                </div>
-                <div className="suggestion-card" onClick={() => setCommentText("Has referral...")}>
-                  <span className="suggestion-icon">💸</span>
-                  <span className="suggestion-text">Has referral...</span>
-                  <span style={{ marginLeft: 'auto', color: 'var(--color-text-secondary)' }}>›</span>
-                </div>
-                <div className="suggestion-card" onClick={() => setCommentText("Would you recommend...")}>
-                  <span className="suggestion-icon">👍</span>
-                  <span className="suggestion-text">Would you rec...</span>
-                  <span style={{ marginLeft: 'auto', color: 'var(--color-text-secondary)' }}>›</span>
-                </div>
-                <div className="suggestion-card" onClick={() => setCommentText("How many points...")}>
-                  <span className="suggestion-icon">⏰</span>
-                  <span className="suggestion-text">How many p...</span>
-                  <span style={{ marginLeft: 'auto', color: 'var(--color-text-secondary)' }}>›</span>
-                </div>
-              </div>
-
               <form className="comment-form" onSubmit={handleComment}>
-              <input
-                type="text"
-                className="comment-input"
-                placeholder="Write a comment..."
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                maxLength={500}
-              />
-              <button
-                type="submit"
-                className="btn btn-primary btn-sm"
-                disabled={!commentText.trim() || commentLoading}
-              >
-                {commentLoading ? '...' : 'Reply'}
-              </button>
-            </form>
+                <input
+                  type="text"
+                  className="comment-input"
+                  placeholder="Write a comment..."
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  maxLength={500}
+                />
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-sm"
+                  disabled={!commentText.trim() || commentLoading}
+                >
+                  {commentLoading ? '...' : 'Reply'}
+                </button>
+              </form>
             </div>
           )}
         </div>
