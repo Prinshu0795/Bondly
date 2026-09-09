@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { postService } from '../services/endpoints';
+import { postService, userService } from '../services/endpoints';
 
 const API_URL = 'http://localhost:5000';
 
@@ -25,9 +25,33 @@ export default function PostCard({ post, onPostUpdated, onPostDeleted }) {
   const [likeLoading, setLikeLoading] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+
+  // Initialize follow state
+  useEffect(() => {
+    if (user && user.following) {
+      const authorId = post.author.userId?._id || post.author.userId;
+      setIsFollowing(user.following.includes(authorId));
+    }
+  }, [user, post.author.userId]);
 
   const isLiked = user ? likes.some((l) => l.userId === user._id) : false;
-  const isAuthor = user && post.author.userId === user._id;
+  const isAuthor = user && post.author.userId === user._id || user && post.author.userId?._id === user._id;
+
+  const handleFollow = async () => {
+    if (!isAuthenticated || followLoading) return;
+    setFollowLoading(true);
+    try {
+      const authorId = post.author.userId?._id || post.author.userId;
+      const res = await userService.toggleFollow(authorId);
+      setIsFollowing(res.data.isFollowing);
+    } catch (err) {
+      console.error('Follow error:', err);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
 
   const handleLike = async () => {
     if (!isAuthenticated || likeLoading) return;
@@ -96,6 +120,16 @@ export default function PostCard({ post, onPostUpdated, onPostDeleted }) {
                 <span className="badge badge-bronze">
                   <span>❶</span> <span>🥉 Bronze</span>
                 </span>
+              )}
+              {!isAuthor && isAuthenticated && (
+                <button 
+                  className={`btn btn-sm ${isFollowing ? 'btn-ghost' : 'btn-primary'}`} 
+                  style={{ padding: '0.1rem 0.4rem', fontSize: '0.75rem', borderRadius: '4px' }}
+                  onClick={handleFollow}
+                  disabled={followLoading}
+                >
+                  {isFollowing ? 'Following' : 'Follow'}
+                </button>
               )}
             </div>
             <span className="post-time">@{post.author.username.toLowerCase()} • {timeAgo(post.createdAt)}</span>

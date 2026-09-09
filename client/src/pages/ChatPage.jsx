@@ -151,11 +151,32 @@ export default function ChatPage() {
       <div className="chat-main">
         {activeChatUser ? (
           <>
-            <div className="chat-header">
-              <div className="chat-avatar" style={activeChatUser.profilePicture ? { backgroundImage: `url(${API_URL}${activeChatUser.profilePicture})` } : {}}>
-                {!activeChatUser.profilePicture && activeChatUser.username[0].toUpperCase()}
+            <div className="chat-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div className="chat-avatar" style={activeChatUser.profilePicture ? { backgroundImage: `url(${API_URL}${activeChatUser.profilePicture})` } : {}}>
+                  {!activeChatUser.profilePicture && activeChatUser.username[0].toUpperCase()}
+                </div>
+                <span className="chat-header-name">{activeChatUser.username}</span>
               </div>
-              <span className="chat-header-name">{activeChatUser.username}</span>
+              <button 
+                className={`btn btn-sm ${user?.following?.includes(activeChatUser._id) ? 'btn-ghost' : 'btn-primary'}`}
+                style={{ padding: '0.2rem 0.6rem', fontSize: '0.8rem', borderRadius: '4px' }}
+                onClick={async () => {
+                  try {
+                    const res = await userService.toggleFollow(activeChatUser._id);
+                    // To instantly reflect the change without waiting for full AuthContext reload, we could trigger a local state update
+                    // But AuthContext doesn't expose a method to just update user locally.
+                    // Let's just alert or it will update on refresh. Wait, let's just make it call the API.
+                    if (res.data.success) {
+                       window.location.reload(); // Simple approach to sync state across the app
+                    }
+                  } catch (err) {
+                    console.error('Follow error:', err);
+                  }
+                }}
+              >
+                {user?.following?.includes(activeChatUser._id) ? 'Following' : 'Follow'}
+              </button>
             </div>
             
             <div className="chat-messages">
