@@ -107,7 +107,7 @@ export default function ChatPage() {
 
   return (
     <div className="chat-container">
-      <div className="chat-sidebar">
+      <div className={`chat-sidebar ${activeChatUser ? 'hidden-mobile' : ''}`}>
         <div className="chat-search">
           <input 
             type="text" 
@@ -154,11 +154,18 @@ export default function ChatPage() {
         </div>
       </div>
 
-      <div className="chat-main">
+      <div className={`chat-main ${!activeChatUser ? 'hidden-mobile' : ''}`}>
         {activeChatUser ? (
           <>
-            <div className="chat-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div className="chat-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <button 
+                  className="btn btn-ghost btn-icon mobile-only-btn" 
+                  onClick={() => setActiveChatUser(null)}
+                  style={{ padding: '0.4rem', fontSize: '1.2rem', marginRight: '-0.25rem' }}
+                >
+                  ←
+                </button>
                 <div className="chat-avatar" style={activeChatUser.profilePicture ? { backgroundImage: `url(${getImageUrl(activeChatUser.profilePicture)})` } : {}}>
                   {!activeChatUser.profilePicture && activeChatUser.username[0].toUpperCase()}
                 </div>
