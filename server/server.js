@@ -30,7 +30,12 @@ app.use('/api/messages', messageRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'Bondly API is running' });
+  res.json({ success: true, message: 'Server is running' });
+});
+
+// Root route for API verification
+app.get('/', (req, res) => {
+  res.send('Bondly API is running smoothly 🚀');
 });
 
 // Handle multer errors
