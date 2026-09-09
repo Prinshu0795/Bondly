@@ -28,7 +28,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    profilePicturePublicId: {
+      type: String,
+      default: '',
+    },
     coverPicture: {
+      type: String,
+      default: '',
+    },
+    coverPicturePublicId: {
       type: String,
       default: '',
     },

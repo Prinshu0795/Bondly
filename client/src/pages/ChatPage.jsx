@@ -4,6 +4,12 @@ import { messageService, userService } from '../services/endpoints';
 
 const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : 'http://localhost:5000';
 
+const getImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return `${API_URL}${url}`;
+};
+
 export default function ChatPage() {
   const { user } = useAuth();
   
@@ -116,7 +122,7 @@ export default function ChatPage() {
           {searchQuery ? (
             searchResults.map((u) => (
               <div key={u._id} className="chat-list-item" onClick={() => handleSelectUser(u)}>
-                <div className="chat-avatar" style={u.profilePicture ? { backgroundImage: `url(${API_URL}${u.profilePicture})` } : {}}>
+                <div className="chat-avatar" style={u.profilePicture ? { backgroundImage: `url(${getImageUrl(u.profilePicture)})` } : {}}>
                   {!u.profilePicture && u.username[0].toUpperCase()}
                 </div>
                 <div className="chat-preview">
@@ -131,7 +137,7 @@ export default function ChatPage() {
                 className={`chat-list-item ${activeChatUser?._id === conv.user._id ? 'active' : ''}`}
                 onClick={() => handleSelectUser(conv.user)}
               >
-                <div className="chat-avatar" style={conv.user.profilePicture ? { backgroundImage: `url(${API_URL}${conv.user.profilePicture})` } : {}}>
+                <div className="chat-avatar" style={conv.user.profilePicture ? { backgroundImage: `url(${getImageUrl(conv.user.profilePicture)})` } : {}}>
                   {!conv.user.profilePicture && conv.user.username[0].toUpperCase()}
                 </div>
                 <div className="chat-preview">
@@ -153,7 +159,7 @@ export default function ChatPage() {
           <>
             <div className="chat-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div className="chat-avatar" style={activeChatUser.profilePicture ? { backgroundImage: `url(${API_URL}${activeChatUser.profilePicture})` } : {}}>
+                <div className="chat-avatar" style={activeChatUser.profilePicture ? { backgroundImage: `url(${getImageUrl(activeChatUser.profilePicture)})` } : {}}>
                   {!activeChatUser.profilePicture && activeChatUser.username[0].toUpperCase()}
                 </div>
                 <span className="chat-header-name">{activeChatUser.username}</span>

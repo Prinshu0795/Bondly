@@ -2,6 +2,8 @@ const User = require('../models/User');
 const Post = require('../models/Post');
 const fs = require('fs');
 const path = require('path');
+const cloudinary = require('../config/cloudinary');
+const streamifier = require('streamifier');
 
 // Get user profile
 exports.getUserProfile = async (req, res) => {
@@ -50,14 +52,37 @@ exports.updateProfileImages = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No image uploaded' });
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
-    
-    if (type === 'profile') {
-      user.profilePicture = imageUrl;
-    } else if (type === 'cover') {
-      user.coverPicture = imageUrl;
-    } else {
+    if (type !== 'profile' && type !== 'cover') {
       return res.status(400).json({ success: false, message: 'Invalid image type. Expected profile or cover.' });
+    }
+
+    let streamUpload = (req) => {
+      return new Promise((resolve, reject) => {
+        let stream = cloudinary.uploader.upload_stream(
+          { folder: 'bondly/profiles' },
+          (error, result) => {
+            if (result) resolve(result);
+            else reject(error);
+          }
+        );
+        streamifier.createReadStream(req.file.buffer).pipe(stream);
+      });
+    };
+
+    const result = await streamUpload(req);
+
+    if (type === 'profile') {
+      if (user.profilePicturePublicId) {
+        cloudinary.uploader.destroy(user.profilePicturePublicId).catch(() => {});
+      }
+      user.profilePicture = result.secure_url;
+      user.profilePicturePublicId = result.public_id;
+    } else if (type === 'cover') {
+      if (user.coverPicturePublicId) {
+        cloudinary.uploader.destroy(user.coverPicturePublicId).catch(() => {});
+      }
+      user.coverPicture = result.secure_url;
+      user.coverPicturePublicId = result.public_id;
     }
 
     await user.save();

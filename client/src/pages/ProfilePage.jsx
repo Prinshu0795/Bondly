@@ -6,6 +6,12 @@ import CreatePost from '../components/CreatePost';
 
 const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : 'http://localhost:5000';
 
+const getImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return `${API_URL}${url}`;
+};
+
 export default function ProfilePage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('My Posts');
@@ -83,7 +89,7 @@ export default function ProfilePage() {
   const followingCount = profileData.following.length;
 
   const coverStyle = profileData.coverPicture 
-    ? { backgroundImage: `url(${API_URL}${profileData.coverPicture})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+    ? { backgroundImage: `url(${getImageUrl(profileData.coverPicture)})`, backgroundSize: 'cover', backgroundPosition: 'center' }
     : {};
 
   return (
@@ -107,7 +113,7 @@ export default function ProfilePage() {
         <div className="profile-info">
           <div>
             <div className="profile-avatar-wrap">
-              <div className="profile-avatar" style={profileData.profilePicture ? { backgroundImage: `url(${API_URL}${profileData.profilePicture})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
+              <div className="profile-avatar" style={profileData.profilePicture ? { backgroundImage: `url(${getImageUrl(profileData.profilePicture)})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
                 {!profileData.profilePicture && profileData.username[0].toUpperCase()}
               </div>
               <input 
@@ -222,7 +228,7 @@ export default function ProfilePage() {
               {(showFollowers ? profileData.followers : profileData.following).length > 0 ? (
                 (showFollowers ? profileData.followers : profileData.following).map(u => (
                   <div key={u._id} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', borderBottom: '1px solid var(--color-border)' }}>
-                    <div className="chat-avatar" style={u.profilePicture ? { backgroundImage: `url(${API_URL}${u.profilePicture})`, width: '40px', height: '40px' } : { width: '40px', height: '40px' }}>
+                    <div className="chat-avatar" style={u.profilePicture ? { backgroundImage: `url(${getImageUrl(u.profilePicture)})`, width: '40px', height: '40px' } : { width: '40px', height: '40px' }}>
                       {!u.profilePicture && u.username[0].toUpperCase()}
                     </div>
                     <span style={{ fontWeight: '500' }}>{u.username}</span>

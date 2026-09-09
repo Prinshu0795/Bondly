@@ -1,11 +1,33 @@
 const Post = require('../models/Post');
 const fs = require('fs');
 const path = require('path');
+const cloudinary = require('../config/cloudinary');
+const streamifier = require('streamifier');
 
 exports.createPost = async (req, res) => {
   try {
     const text = req.body.text?.trim() || '';
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+    let imageUrl = '';
+    let imagePublicId = '';
+
+    if (req.file) {
+      let streamUpload = (req) => {
+        return new Promise((resolve, reject) => {
+          let stream = cloudinary.uploader.upload_stream(
+            { folder: 'bondly/posts' },
+            (error, result) => {
+              if (result) resolve(result);
+              else reject(error);
+            }
+          );
+          streamifier.createReadStream(req.file.buffer).pipe(stream);
+        });
+      };
+      
+      const result = await streamUpload(req);
+      imageUrl = result.secure_url;
+      imagePublicId = result.public_id;
+    }
 
     if (!text && !imageUrl) {
       return res.status(400).json({ success: false, message: 'Post must contain at least text or an image' });
@@ -18,6 +40,7 @@ exports.createPost = async (req, res) => {
       },
       text,
       imageUrl,
+      imagePublicId,
     });
 
     post = await post.populate('author.userId', 'profilePicture badges');
@@ -67,7 +90,9 @@ exports.deletePost = async (req, res) => {
     }
 
     // Clean up uploaded image if it exists
-    if (post.imageUrl) {
+    if (post.imagePublicId) {
+      cloudinary.uploader.destroy(post.imagePublicId).catch(() => {});
+    } else if (post.imageUrl) {
       const imagePath = path.join(__dirname, '..', post.imageUrl);
       fs.unlink(imagePath, () => {}); // silent fail if file missing
     }

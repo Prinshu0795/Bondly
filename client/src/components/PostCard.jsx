@@ -4,6 +4,12 @@ import { postService, userService } from '../services/endpoints';
 
 const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : 'http://localhost:5000';
 
+const getImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return `${API_URL}${url}`;
+};
+
 function timeAgo(dateStr) {
   const seconds = Math.floor((Date.now() - new Date(dateStr)) / 1000);
   if (seconds < 60) return 'just now';
@@ -105,7 +111,7 @@ export default function PostCard({ post, onPostUpdated, onPostDeleted }) {
         <div className="post-author">
           <div 
             className="author-avatar"
-            style={post.author.userId?.profilePicture ? { backgroundImage: `url(${API_URL}${post.author.userId.profilePicture})`, backgroundSize: 'cover', backgroundPosition: 'center', color: 'transparent' } : {}}
+            style={post.author.userId?.profilePicture ? { backgroundImage: `url(${getImageUrl(post.author.userId.profilePicture)})`, backgroundSize: 'cover', backgroundPosition: 'center', color: 'transparent' } : {}}
           >
             {!post.author.userId?.profilePicture && post.author.username[0].toUpperCase()}
           </div>
@@ -150,7 +156,7 @@ export default function PostCard({ post, onPostUpdated, onPostDeleted }) {
 
       {post.imageUrl && (
         <div className="post-image">
-          <img src={`${API_URL}${post.imageUrl}`} alt="Post" loading="lazy" />
+          <img src={getImageUrl(post.imageUrl)} alt="Post" loading="lazy" />
         </div>
       )}
 
