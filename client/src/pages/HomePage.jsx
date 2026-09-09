@@ -11,6 +11,7 @@ export default function HomePage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [activeTab, setActiveTab] = useState('All Post');
   const [error, setError] = useState('');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const fetchPosts = useCallback(async (pageNum = 1, append = false) => {
     if (append) setLoadingMore(true);
@@ -37,6 +38,7 @@ export default function HomePage() {
 
   const handlePostCreated = (newPost) => {
     setPosts((prev) => [newPost, ...prev]);
+    setShowCreateModal(false);
   };
 
   const handlePostDeleted = (postId) => {
@@ -68,7 +70,20 @@ export default function HomePage() {
           </button>
         </div>
 
-        <CreatePost onPostCreated={handlePostCreated} />
+        {showCreateModal && (
+          <div style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+            backdropFilter: 'blur(4px)'
+          }} onClick={() => setShowCreateModal(false)}>
+            <div style={{ width: '90%', maxWidth: '500px' }} onClick={e => e.stopPropagation()}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.5rem' }}>
+                <button className="btn-ghost" style={{ background: 'rgba(0,0,0,0.5)', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', border: 'none', cursor: 'pointer' }} onClick={() => setShowCreateModal(false)}>✕</button>
+              </div>
+              <CreatePost onPostCreated={handlePostCreated} />
+            </div>
+          </div>
+        )}
 
         {/* Feed Tabs */}
         <div className="tabs-nav" style={{ marginTop: '0.5rem' }}>
@@ -126,7 +141,7 @@ export default function HomePage() {
         )}
       </div>
       
-      <button className="fab-btn">
+      <button className="fab-btn" onClick={() => setShowCreateModal(true)}>
         +
       </button>
     </div>

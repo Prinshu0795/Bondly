@@ -21,8 +21,11 @@ export default function Navbar() {
         <div className="navbar-actions">
           {isAuthenticated ? (
             <>
-              <Link to="/chat" className="btn btn-ghost" title="Messages" style={{ fontSize: '1.2rem', padding: '0.4rem 0.6rem' }}>
-                💬
+              <Link to="/" className="btn btn-ghost" style={{ padding: '0.4rem 0.6rem' }}>
+                🏠 Home
+              </Link>
+              <Link to="/chat" className="btn btn-ghost" title="Messages" style={{ padding: '0.4rem 0.6rem' }}>
+                💬 Message/DM
               </Link>
               <Link to="/profile" className="navbar-user" style={{ textDecoration: 'none' }}>
                 <span className="user-avatar">{user?.username?.[0]?.toUpperCase()}</span>

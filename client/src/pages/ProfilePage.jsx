@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { userService } from '../services/endpoints';
 import PostCard from '../components/PostCard';
+import CreatePost from '../components/CreatePost';
 
 const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : 'http://localhost:5000';
 
@@ -18,6 +19,7 @@ export default function ProfilePage() {
   
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   
   const profilePicRef = useRef(null);
   const coverPicRef = useRef(null);
@@ -55,6 +57,11 @@ export default function ProfilePage() {
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to upload image');
     }
+  };
+
+  const handlePostCreated = (newPost) => {
+    setPosts((prev) => [newPost, ...prev]);
+    setShowCreateModal(false);
   };
 
   if (loading) {
@@ -231,7 +238,22 @@ export default function ProfilePage() {
         </div>
       )}
 
-      <button className="fab-btn">
+      {showCreateModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+          backdropFilter: 'blur(4px)'
+        }} onClick={() => setShowCreateModal(false)}>
+          <div style={{ width: '90%', maxWidth: '500px' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.5rem' }}>
+              <button className="btn-ghost" style={{ background: 'rgba(0,0,0,0.5)', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', border: 'none', cursor: 'pointer' }} onClick={() => setShowCreateModal(false)}>✕</button>
+            </div>
+            <CreatePost onPostCreated={handlePostCreated} />
+          </div>
+        </div>
+      )}
+
+      <button className="fab-btn" onClick={() => setShowCreateModal(true)}>
         +
       </button>
     </div>
