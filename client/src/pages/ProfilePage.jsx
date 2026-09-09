@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { userService } from '../services/endpoints';
 import PostCard from '../components/PostCard';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function ProfilePage() {
   const { user } = useAuth();
