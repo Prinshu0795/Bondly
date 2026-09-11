@@ -60,11 +60,57 @@ exports.getPosts = async (req, res) => {
     const page = Math.max(1, parseInt(req.query.page) || 1);
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 10));
     const skip = (page - 1) * limit;
+    const tab = req.query.tab || 'All Post';
 
-    const [posts, totalPosts] = await Promise.all([
-      Post.find().sort({ createdAt: -1 }).skip(skip).limit(limit).populate('author.userId', 'profilePicture badges'),
-      Post.countDocuments(),
-    ]);
+    let filter = {};
+
+    if (tab === 'For You') {
+      let userId = null;
+      if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+        const token = req.headers.authorization.split(' ')[1];
+        try {
+          const jwt = require('jsonwebtoken');
+          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          userId = decoded.id;
+        } catch(e) {}
+      }
+      
+      if (userId) {
+        const User = require('../models/User');
+        const currentUser = await User.findById(userId);
+        if (currentUser && currentUser.following && currentUser.following.length > 0) {
+          filter = { 'author.userId': { $in: currentUser.following } };
+        }
+      }
+    }
+
+    let pipeline = [];
+    if (Object.keys(filter).length > 0) {
+      pipeline.push({ $match: filter });
+    }
+
+    if (tab === 'Most Liked') {
+      pipeline.push({ $addFields: { likesCount: { $size: { $ifNull: ["$likes", []] } } } });
+      pipeline.push({ $sort: { likesCount: -1, createdAt: -1 } });
+    } else if (tab === 'Most Commented') {
+      pipeline.push({ $addFields: { commentsCount: { $size: { $ifNull: ["$comments", []] } } } });
+      pipeline.push({ $sort: { commentsCount: -1, createdAt: -1 } });
+    } else {
+      pipeline.push({ $sort: { createdAt: -1 } });
+    }
+
+    // Get total posts count for pagination
+    let countPipeline = [...pipeline, { $count: 'totalPosts' }];
+    const countResult = await Post.aggregate(countPipeline);
+    const totalPosts = countResult.length > 0 ? countResult[0].totalPosts : 0;
+
+    pipeline.push({ $skip: skip });
+    pipeline.push({ $limit: limit });
+
+    let posts = await Post.aggregate(pipeline);
+
+    // Populate author.userId fields
+    posts = await Post.populate(posts, { path: 'author.userId', select: 'profilePicture badges' });
 
     res.json({
       success: true,
@@ -74,6 +120,7 @@ exports.getPosts = async (req, res) => {
       totalPosts,
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ success: false, message: 'Server error fetching posts' });
   }
 };

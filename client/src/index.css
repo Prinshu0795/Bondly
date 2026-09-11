@@ -6,22 +6,22 @@
 
 /* --- CSS Variables / Design Tokens --- */
 :root {
-  --color-bg: #0B1426; /* Deep navy background */
-  --color-bg-elevated: #111b33;
-  --color-bg-card: #12182b; /* Slightly lighter card bg */
-  --color-bg-hover: #1c2642;
-  --color-bg-input: #151e32;
+  --color-bg: #000000;
+  --color-bg-elevated: #111111;
+  --color-bg-card: #0a0a0a;
+  --color-bg-hover: #1f1f1f;
+  --color-bg-input: #141414;
 
-  --color-border: #23304c;
-  --color-border-focus: #3b82f6;
+  --color-border: #333333;
+  --color-border-focus: #ffffff;
 
-  --color-text: #f1f5f9;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
+  --color-text: #ffffff;
+  --color-text-secondary: #a3a3a3;
+  --color-text-muted: #737373;
 
-  --color-primary: #3b82f6;
-  --color-primary-hover: #60a5fa;
-  --color-primary-glow: rgba(59, 130, 246, 0.25);
+  --color-primary: #ffffff;
+  --color-primary-hover: #e5e5e5;
+  --color-primary-glow: rgba(255, 255, 255, 0.15);
 
   --color-danger: #ef4444;
   --color-danger-hover: #f87171;
@@ -147,7 +147,7 @@ img {
 }
 .btn-primary {
   background: var(--color-primary);
-  color: #fff;
+  color: #000000;
 }
 .btn-primary:hover:not(:disabled) {
   background: var(--color-primary-hover);
@@ -260,7 +260,7 @@ img {
   font-size: 1.4rem;
 }
 .brand-text {
-  background: linear-gradient(135deg, var(--color-primary), #a29bfe);
+  background: linear-gradient(135deg, var(--color-primary), #a3a3a3);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -282,8 +282,8 @@ img {
   width: 32px;
   height: 32px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--color-primary), #a29bfe);
-  color: #fff;
+  background: linear-gradient(135deg, var(--color-primary), #a3a3a3);
+  color: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -449,8 +449,8 @@ img {
   width: 38px;
   height: 38px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-  color: #fff;
+  background: linear-gradient(135deg, #ffffff, #a3a3a3);
+  color: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -753,7 +753,7 @@ img {
   height: 56px;
   border-radius: var(--radius-full);
   background: var(--color-primary);
-  color: white;
+  color: #000000;
   border: none;
   font-size: 1.5rem;
   display: flex;

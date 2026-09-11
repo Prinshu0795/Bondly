@@ -13,12 +13,12 @@ export default function HomePage() {
   const [error, setError] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const fetchPosts = useCallback(async (pageNum = 1, append = false) => {
+  const fetchPosts = useCallback(async (pageNum = 1, append = false, currentTab = activeTab) => {
     if (append) setLoadingMore(true);
     else setLoading(true);
 
     try {
-      const res = await postService.getPosts(pageNum);
+      const res = await postService.getPosts(pageNum, 10, currentTab);
       const data = res.data;
       setPosts((prev) => (append ? [...prev, ...data.posts] : data.posts));
       setTotalPages(data.totalPages);
@@ -30,11 +30,11 @@ export default function HomePage() {
       setLoading(false);
       setLoadingMore(false);
     }
-  }, []);
+  }, [activeTab]);
 
   useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+    fetchPosts(1, false, activeTab);
+  }, [fetchPosts, activeTab]);
 
   const handlePostCreated = (newPost) => {
     setPosts((prev) => [newPost, ...prev]);

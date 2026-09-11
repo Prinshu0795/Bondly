@@ -7,7 +7,8 @@ export const authService = {
 };
 
 export const postService = {
-  getPosts: (page = 1, limit = 10) => api.get(`/posts?page=${page}&limit=${limit}`),
+  getPosts: (page = 1, limit = 10, tab = 'All Post') => 
+    api.get(`/posts?page=${page}&limit=${limit}&tab=${encodeURIComponent(tab)}`),
 
   createPost: (formData) =>
     api.post('/posts', formData, {
