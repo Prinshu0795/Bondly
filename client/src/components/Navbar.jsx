@@ -21,18 +21,21 @@ export default function Navbar() {
         <div className="navbar-actions">
           {isAuthenticated ? (
             <>
-              <Link to="/" className="btn btn-ghost" style={{ padding: '0.4rem 0.6rem' }}>
-                🏠 Home
+              <Link to="/" className="btn btn-ghost nav-btn" title="Home">
+                <span className="nav-icon">🏠</span>
+                <span className="nav-text">Home</span>
               </Link>
-              <Link to="/chat" className="btn btn-ghost" title="Messages" style={{ padding: '0.4rem 0.6rem' }}>
-                💬 Message/DM
+              <Link to="/chat" className="btn btn-ghost nav-btn" title="Messages">
+                <span className="nav-icon">💬</span>
+                <span className="nav-text">Messages</span>
               </Link>
               <Link to="/profile" className="navbar-user" style={{ textDecoration: 'none' }}>
                 <span className="user-avatar">{user?.username?.[0]?.toUpperCase()}</span>
                 <span className="user-name">{user?.username}</span>
               </Link>
-              <button className="btn btn-ghost" onClick={handleLogout}>
-                Logout
+              <button className="btn btn-ghost nav-btn nav-logout" onClick={handleLogout} title="Logout">
+                <span className="nav-icon">🚪</span>
+                <span className="nav-text">Logout</span>
               </button>
             </>
           ) : (

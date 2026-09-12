@@ -657,6 +657,23 @@ img {
   .comment-form .btn {
     width: 100%;
   }
+
+  /* Navbar Mobile Responsiveness */
+  .navbar-inner {
+    padding: 0.6rem 0.5rem;
+  }
+  .navbar-actions {
+    gap: 0.25rem;
+  }
+  .nav-text {
+    display: none;
+  }
+  .nav-btn {
+    padding: 0.4rem 0.5rem;
+  }
+  .nav-icon {
+    font-size: 1.1rem;
+  }
 }
 
 @media (max-width: 400px) {
